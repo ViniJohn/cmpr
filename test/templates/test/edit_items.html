@@ -1,0 +1,55 @@
+<!-- edit_items.html -->
+{% extends 'test/base.html' %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Item Flag</th>
+                <th>Vendor Flag</th>
+                <th>Item</th>
+                <th>Vendor</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for form_group in forms %}
+                {% with item_form=form_group.item_form vendor_formset=form_group.vendor_formset %}
+                    {{ vendor_formset.management_form }}
+                    {% for vendor_form in vendor_formset %}
+                        <tr>
+                            {% if forloop.first %}
+                                <td rowspan="{{ vendor_formset.total_form_count }}">
+                                    {{ item_form.itemflag }}
+                                    {{ item_form.id }}
+                                </td>
+                            {% endif %}
+                            <td>
+                                {% if vendor_form.instance.pk %}
+                                    <input type="radio" 
+                                           name="vendorflag_{{ form_group.item_id }}"
+                                           value="{{ vendor_form.instance.pk }}"
+                                           {% if vendor_form.instance.vendorflag %}checked{% endif %}>
+                                    {{ vendor_form.id }}
+                                {% else %}
+                                    <input type="radio" 
+                                           name="vendorflag_{{ form_group.item_id }}"
+                                           value="new_{{ forloop.counter0 }}"
+                                           {% if forloop.first and not form_group.primary_vendor_id %}checked{% endif %}>
+                                {% endif %}
+                            </td>
+                            <td>{{ item_form.name }}</td>
+                            <td>{{ vendor_form.vendorname }}</td>
+                            <td>{{ vendor_form.value }}</td>
+                            <td>{{ item_form.reportnumber }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endwith %}
+            {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+{% endblock %}

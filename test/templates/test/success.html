@@ -1,0 +1,36 @@
+<!-- success.html -->
+{% extends 'test/base.html' %}
+
+{% block content %}
+<h2>Updated Records</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Item Flag</th>
+            <th>Primary Vendor</th>
+            <th>Item</th>
+            <th>Vendor</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+            {% for vendor in item.vendors.all %}
+            <tr>
+                {% if forloop.first %}
+                    <td rowspan="{{ item.vendors.count }}">
+                        {% if item.itemflag %}✅{% else %}❌{% endif %}
+                    </td>
+                {% endif %}
+                <td>{% if vendor.vendorflag %}⭐{% endif %}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ vendor.vendorname }}</td>
+                <td>{{ vendor.value }}</td>
+            </tr>
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'edit_items' %}" class="btn btn-secondary">Edit Again</a>
+
+{% endblock content %}
